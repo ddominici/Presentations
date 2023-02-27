@@ -1,0 +1,12 @@
+-- Turn off auto stats
+USE [master]
+GO
+ALTER DATABASE [AdventureWorks] SET AUTO_CREATE_STATISTICS OFF
+GO
+ALTER DATABASE [AdventureWorks] SET AUTO_UPDATE_STATISTICS OFF WITH NO_WAIT
+GO
+
+-- Upgrade compatibility
+ALTER DATABASE AdventureWorks
+SET COMPATIBILITY_LEVEL = 150;  
+GO

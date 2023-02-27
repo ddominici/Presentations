@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<SqlWorkbenchSqlProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="What's new in SQL Server 2022 for developers">
+  <Items>
+    <LogicalFolder Name="Connections" Type="2" Sorted="true">
+      <Items>
+        <ConnectionNode Name="SQL2022:SQL2022\ddominici">
+          <Created>2022-05-26T15:06:45.8875889+02:00</Created>
+          <Type>SQL</Type>
+          <Server>SQL2022</Server>
+          <UserName />
+          <Authentication>Windows Authentication</Authentication>
+          <InitialDB />
+          <LoginTimeout>30</LoginTimeout>
+          <ExecutionTimeout>0</ExecutionTimeout>
+          <ConnectionProtocol>NotSpecified</ConnectionProtocol>
+          <ApplicationName />
+        </ConnectionNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="Queries" Type="0" Sorted="true">
+      <Items>
+        <FileNode Name="JSON.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SQL2022:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SQL2022</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>JSON.sql</FullPath>
+        </FileNode>
+        <FileNode Name="OTHERFUNCTIONS.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SQL2022:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SQL2022</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>OTHERFUNCTIONS.sql</FullPath>
+        </FileNode>
+        <FileNode Name="QueryStore.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SQL2022:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SQL2022</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>QueryStore.sql</FullPath>
+        </FileNode>
+        <FileNode Name="TIMESERIES.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SQL2022:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SQL2022</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>TIMESERIES.sql</FullPath>
+        </FileNode>
+        <FileNode Name="WINDOW.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:SQL2022:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>SQL2022</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>WINDOW.sql</FullPath>
+        </FileNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="Miscellaneous" Type="3" Sorted="true">
+      <Items />
+    </LogicalFolder>
+  </Items>
+</SqlWorkbenchSqlProject>
