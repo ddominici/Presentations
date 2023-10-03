@@ -1,0 +1,84 @@
+name: ci-adventureworkslt-api
+apiVersion: "2021-10-01"
+location: westeurope
+properties:
+  containers:
+    - name: reverse-proxy
+      properties:
+        image: caddy:2.6
+        ports:
+          - protocol: TCP
+            port: 80
+          - protocol: TCP
+            port: 443
+        resources:
+          requests:
+            memoryInGB: 1
+            cpu: 1
+          limits:
+            memoryInGB: 1
+            cpu: 1
+        volumeMounts:
+          - name: proxy-caddyfile
+            mountPath: /etc/caddy
+          - name: proxy-data
+            mountPath: /data
+          - name: proxy-config
+            mountPath: /config
+
+    - name: data-api-builder
+      properties:
+        image: mcr.microsoft.com/azure-databases/data-api-builder:0.8.51
+        resources:
+          requests:
+            memoryInGB: 1
+            cpu: 1
+          limits:
+            memoryInGB: 1
+            cpu: 1
+        volumeMounts:
+          - name: dab-config
+            mountPath: /dab-config
+        environmentVariables:
+          - name: DATABASE_CONNECTION_STRING
+            secureValue: "Server=tcp:sql-1nn0va.database.windows.net,1433;Database=sqldb-adventureworks;User ID=<username>;Password=<password>;Encrypt=true;Connection Timeout=30;"
+          - name: ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS
+            value: true
+        command:
+          - dotnet
+          - Azure.DataApiBuilder.Service.dll
+          - --ConfigFileName
+          - /dab-config/dab-config.json
+
+  ipAddress:
+    ports:
+      - protocol: TCP
+        port: 80
+      - protocol: TCP
+        port: 443
+    type: Public        
+    dnsNameLabel: 1nn0va-dab-api-demo
+
+  osType: Linux
+
+  volumes:
+    - name: proxy-caddyfile
+      azureFile: 
+        shareName: proxy-caddyfile
+        storageAccountName: 1nn0vadabdemo 
+        storageAccountKey: "IgWOuLBzQn8gK/Gl8ywHgBvTk/o+sojb3Hnb5o07O78n/Dd2Hq8T04MNZbwPncF8eQ1+77se+SyR+ASt5ld2Jg=="
+    - name: proxy-data
+      azureFile: 
+        shareName: proxy-data
+        storageAccountName: 1nn0vadabdemo 
+        storageAccountKey: "IgWOuLBzQn8gK/Gl8ywHgBvTk/o+sojb3Hnb5o07O78n/Dd2Hq8T04MNZbwPncF8eQ1+77se+SyR+ASt5ld2Jg=="
+    - name: proxy-config
+      azureFile: 
+        shareName: proxy-config
+        storageAccountName: 1nn0vadabdemo 
+        storageAccountKey: "IgWOuLBzQn8gK/Gl8ywHgBvTk/o+sojb3Hnb5o07O78n/Dd2Hq8T04MNZbwPncF8eQ1+77se+SyR+ASt5ld2Jg=="
+    - name: dab-config
+      azureFile: 
+        shareName: dab-config
+        storageAccountName: 1nn0vadabdemo 
+        storageAccountKey: "IgWOuLBzQn8gK/Gl8ywHgBvTk/o+sojb3Hnb5o07O78n/Dd2Hq8T04MNZbwPncF8eQ1+77se+SyR+ASt5ld2Jg=="
