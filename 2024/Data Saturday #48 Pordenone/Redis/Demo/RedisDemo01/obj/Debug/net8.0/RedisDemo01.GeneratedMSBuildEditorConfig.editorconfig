@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = RedisDemo01
-build_property.ProjectDir = /Users/ddominici/Documents/_Work/_Speaking/20240224 Data Saturday Pordenone/Demo/RedisDemo01/
+build_property.ProjectDir = /Users/ddominici/Documents/_Speaking/github/2024/Data Saturday #48 Pordenone/Redis/Demo/RedisDemo01/
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
