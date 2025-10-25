@@ -3,20 +3,11 @@
 ## Istruzioni per l'uso
 
 Questa demo utilizza SQL Server 2025 installato su una virtual machine e Ollama installato direttamente sull'host.
+<pre>
+Windows 2025, SQL Server 2025 RC2, Caddy (192.168.184.217, porta HTTPS)
 
-Windows 2025
-SQL Server 2025 RC2
-(192.168.184.217, porta HTTPS)
-
-Caddy
-
-   |
-   |
-   |
-
-MacOS
-Ollama (192.168.1.91, porta HTTP)
-
+MacOS, Ollama (192.168.1.91, porta HTTP)
+</pre>
 
 Poiché Ollama comunica usando la porta HTTP e SQL Server richiede che la comunicazione sia in HTTPS, occorre un proxy che traduca le chiamate.
 Per farlo ho usato Caddy, ma funziona anche NGINX.
