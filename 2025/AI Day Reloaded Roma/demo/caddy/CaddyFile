@@ -1,0 +1,11 @@
+{
+	debug
+}
+
+192.168.184.217:11443 {
+	tls "c:\certs\cert.crt" "c:\certs\cert.key"
+	reverse_proxy 192.168.1.91:11434
+	log {	
+		output stdout
+	}
+}
