@@ -1,25 +1,68 @@
-# AI Day Reloaded
+# SQL Server 2025 and local AI
 
-## Istruzioni per l'uso
+## Tecnologie usate
 
-Questa demo utilizza SQL Server 2025 installato su una virtual machine e Ollama installato direttamente sull'host.
-<pre>
-Windows 2025, SQL Server 2025 RC2, Caddy (192.168.184.217, porta HTTPS)
+- SQL Server 2025 RC2
+- Ollama
+- Caddy
+- OpenSSL per Windows (64bit)
 
-MacOS, Ollama (192.168.1.91, porta HTTP)
-</pre>
+## SQL Server 2025
 
-Poiché Ollama comunica usando la porta HTTP e SQL Server richiede che la comunicazione sia in HTTPS, occorre un proxy che traduca le chiamate.
-Per farlo ho usato Caddy, ma funziona anche NGINX.
+Installare SQL Server 2025 (almeno RC1)
 
-In sostanza, Caddy, installato ed eseguito dalla VM Windows, ascolta sulla porta HTTPS, utilizzando i due certificati autoprodotti, e gira la chiamata ad Ollama usando il protocollo HTTP.
 
-Attenzione nella generazione dei certificati ad utilizzare il nome host corretto o, come nell'esempio, l'indirizzo IP del server dove viene eseguito, altrimenti SQL Server non riesce a validare il certificato.
+## Ollama
 
-### Step
+Installare Ollama
 
-1. Installare VM con Windows 2022 o 2025, SQL Server 2025 RC1 e SQL Server Management Studio 21
-2. Variare la configurazione di Caddy, generando i certificati per la propria macchina virtuale e modificando il caddyfile (indirizzi ip o nome host) 
-   Per generare i certificati occorre eseguire openssl
-3. Lanciare run_caddy.bat
-4. Lanciare Management Studio ed aprire il file ollama_ai.sql
+
+## Caddy
+
+### Installare OpenSSL
+
+Per generare i certificati self-signed occorre installare OpenSSL.
+
+### Creare i certificati SSL
+
+mkdir -p C:/certs
+cd C:/certs
+
+#### Generate new certificate with correct settings
+
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout C:/certs/cert.key \
+  -out C:/certs/cert.crt \
+  -subj "/CN=192.168.184.217" \
+  -addext "subjectAltName=IP:192.168.184.217"
+
+Verifica il contenuto del certificato
+
+openssl x509 -in C:/certs/cert.crt -text -noout
+
+#### Importa il certificato in Trusted Root Certification Authorities
+
+Import-Certificate -FilePath "C:\certs\cert.crt" -CertStoreLocation Cert:\LocalMachine\Root
+
+#### Create Caddyfile
+
+Attenzione ad utilizzare gli indirizzi IP esatti.
+Il certificato deve avere il CN= corretto
+
+Questo file di configurazione consente di dirigere le richieste locali sulla porta 11443 al
+server 192.168.1.91, porta 11434 (dove è in ascolto Ollama): 
+
+{
+	debug
+}
+
+192.168.184.217:11443 {
+	tls "c:\certs\cert.crt" "c:\certs\cert.key"
+	reverse_proxy 192.168.1.91:11434
+	log {	
+		output stdout
+	}
+}
+
+####  
+
