@@ -1,0 +1,75 @@
+--
+-- Elenco dei satelliti (da CelesTrak)
+--
+DROP TABLE IF EXISTS SatelliteOrbitalData;
+
+CREATE TABLE SatelliteOrbitalData (
+    ID INT IDENTITY(1,1) PRIMARY KEY,
+    OBJECT_NAME NVARCHAR(100) NOT NULL,
+    OBJECT_ID NVARCHAR(50) NOT NULL,
+    EPOCH DATETIME2 NOT NULL,
+    MEAN_MOTION DECIMAL(18,8) NOT NULL,
+    ECCENTRICITY DECIMAL(18,10) NOT NULL,
+    INCLINATION DECIMAL(18,8) NOT NULL,
+    RA_OF_ASC_NODE DECIMAL(18,8) NOT NULL,
+    ARG_OF_PERICENTER DECIMAL(18,8) NOT NULL,
+    MEAN_ANOMALY DECIMAL(18,8) NOT NULL,
+    EPHEMERIS_TYPE INT NOT NULL,
+    CLASSIFICATION_TYPE CHAR(1) NOT NULL,
+    NORAD_CAT_ID INT NOT NULL,
+    ELEMENT_SET_NO INT NOT NULL,
+    REV_AT_EPOCH INT NOT NULL,
+    BSTAR DECIMAL(18,11) NOT NULL,
+    MEAN_MOTION_DOT DECIMAL(18,11) NOT NULL,
+    MEAN_MOTION_DDOT DECIMAL(18,11) NOT NULL
+);
+GO
+
+DECLARE @headers NVARCHAR(MAX) = N'{"Content-Type":"application/json","Accept":"application/json"}';
+--DECLARE @URL NVARCHAR(4000) = N'https://api.nasa.gov/insight_weather/?api_key=DEMO_KEY&feedtype=json&ver=1.0';
+DECLARE @URL NVARCHAR(4000) = 'https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=json'
+DECLARE @timeout_seconds INT = 180;
+DECLARE @resp NVARCHAR(MAX);
+DECLARE @rc INT;
+
+EXEC @rc = sys.sp_invoke_external_rest_endpoint
+    @url      = @URL,
+    @method   = 'GET',
+    @headers  = @headers,
+    @timeout  = @timeout_seconds,
+    @response = @resp OUTPUT;
+
+SELECT @resp;
+
+DECLARE @raw_response JSON = TRY_CAST(@resp AS JSON);
+
+-- Extract result body as text
+DECLARE @results NVARCHAR(MAX) =
+    CONVERT(NVARCHAR(MAX), JSON_QUERY(@raw_response, '$.result'));
+
+SELECT @results
+
+INSERT INTO SatelliteOrbitalData
+SELECT *
+FROM OPENJSON(@results)
+WITH (
+    OBJECT_NAME VARCHAR(100) '$.OBJECT_NAME',
+    OBJECT_ID VARCHAR(50) '$.OBJECT_ID',
+    EPOCH VARCHAR(50) '$.EPOCH',
+    MEAN_MOTION DECIMAL(18,8) '$.MEAN_MOTION',
+    ECCENTRICITY DECIMAL(18,10) '$.ECCENTRICITY',
+    INCLINATION DECIMAL(18,6) '$.INCLINATION',
+    RA_OF_ASC_NODE DECIMAL(18,6) '$.RA_OF_ASC_NODE',
+    ARG_OF_PERICENTER DECIMAL(18,6) '$.ARG_OF_PERICENTER',
+    MEAN_ANOMALY DECIMAL(18,6) '$.MEAN_ANOMALY',
+    EPHEMERIS_TYPE INT '$.EPHEMERIS_TYPE',
+    CLASSIFICATION_TYPE VARCHAR(10) '$.CLASSIFICATION_TYPE',
+    NORAD_CAT_ID INT '$.NORAD_CAT_ID',
+    ELEMENT_SET_NO INT '$.ELEMENT_SET_NO',
+    REV_AT_EPOCH INT '$.REV_AT_EPOCH',
+    BSTAR DECIMAL(18,11) '$.BSTAR',
+    MEAN_MOTION_DOT DECIMAL(18,11) '$.MEAN_MOTION_DOT',
+    MEAN_MOTION_DDOT DECIMAL(18,11) '$.MEAN_MOTION_DDOT'
+);
+
+SELECT * FROM SatelliteOrbitalData;

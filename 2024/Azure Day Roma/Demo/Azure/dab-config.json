@@ -1,0 +1,44 @@
+{
+    "$schema": "https://dataapibuilder.azureedge.net/schemas/v0.5.35/dab.draft.schema.json",
+    "data-source": {
+        "database-type": "mssql",
+        "options": {
+            "set-session-context": false
+        },
+        "connection-string": "Server=adroma24sql.database.windows.net;Database=sqldb-adventureworks;User id=sqladmin;Password=71Cb8OIi95;Encrypt=true;Connection Timeout=30;"
+    },
+    "runtime": {
+        "rest": {
+            "enabled": true,
+            "path": "/api"
+        },
+        "graphql": {
+            "allow-introspection": true,
+            "enabled": true,
+            "path": "/graphql"
+        },
+        "host": {
+            "mode": "development",
+            "cors": {
+                "origins": [],
+                "allow-credentials": false
+            },
+            "authentication": {
+                "provider": "StaticWebApps"
+            }
+        }
+    },
+    "entities": {
+        "product": {
+            "source": "SalesLT.Product",
+            "permissions": [
+                {
+                    "role": "anonymous",
+                    "actions": [
+                        "read"
+                    ]
+                }
+            ]
+        }
+    }
+}

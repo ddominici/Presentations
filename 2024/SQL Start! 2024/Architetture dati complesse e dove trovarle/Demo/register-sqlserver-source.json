@@ -1,0 +1,25 @@
+{
+    "name": "sql-server-source",
+    "config": {
+        "connector.class" : "io.debezium.connector.sqlserver.SqlServerConnector",
+        "tasks.max" : "1",
+        "database.hostname" : "sql-2022",
+        "database.port" : "1433",
+        "database.user" : "debezium",
+        "database.password" : "Abcd1234!",
+        "database.names" : "testDB",
+        "database.server.name" : "sql-2022",
+        "database.encrypt": "false",
+        "topic.prefix" : "src",
+        "table.include.list": "dbo.orders,dbo.products",
+        "database.history.kafka.bootstrap.servers": "kafka1:29092", 
+        "database.history.kafka.topic": "schema-changes-topic",
+        "schema.history.internal.kafka.bootstrap.servers" : "kafka:9092",
+        "schema.history.internal.kafka.topic": "schema-changes.inventory",
+        "decimal.handling.mode": "string",
+        "transforms": "route",
+        "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+        "transforms.route.regex": "([^.]+)\\.([^.]+)\\.([^.]+)",
+        "transforms.route.replacement": "$3"
+    }
+}
