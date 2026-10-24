@@ -1,0 +1,28 @@
+{
+    "name": "sink-connector",  
+    "config": {
+        "connector.class": "io.debezium.connector.jdbc.JdbcSinkConnector",  
+        "tasks.max": "1",  
+        "connection.url": "jdbc:postgresql://order-db:5432/orderdb?currentSchema=purchaseorder",
+        "connection.username": "orderuser",  
+        "connection.password": "orderpw",  
+        "insert.mode": "upsert",  
+        "delete.enabled": "true",  
+        "primary.key.mode": "record_key",  
+        "schema.evolution": "basic",  
+        "database.time_zone": "UTC",
+        "auto.evolve": "true",
+        "quote.identifiers": "true",
+        "auto.create": "true", 
+        "value.converter.schemas.enable": "true", 
+        "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "table.name.format": "${topic}",
+        "topics": "src.testDB.dbo.products,src.testDB.dbo.orders",
+        "transforms": "unwrap, route",
+        "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+        "transforms.unwrap.delete.handling.mode": "rewrite",        
+        "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+        "transforms.route.regex": "([^.]+)\\.([^.]+)\\.([^.]+)",
+        "transforms.route.replacement": "$3"
+    }
+}

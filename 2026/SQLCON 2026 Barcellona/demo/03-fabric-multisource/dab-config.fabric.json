@@ -1,0 +1,28 @@
+{
+  "$schema": "https://github.com/Azure/data-api-builder/releases/latest/download/dab.draft.schema.json",
+  "data-source": {
+    "database-type": "mssql",
+    "connection-string": "@env('FABRIC_CONN')",
+    "health": {
+      "name": "fabric-sales"
+    }
+  },
+  "entities": {
+    "SalesFact": {
+      "source": { "object": "dbo.SalesFact", "type": "table" },
+      "description": "Monthly written premium by product and region — SQL database in Microsoft Fabric",
+      "rest": { "path": "sales-fact" },
+      "permissions": [ { "role": "anonymous", "actions": [ "read" ] } ]
+    },
+    "SalesByRegion": {
+      "source": {
+        "object": "dbo.vw_SalesByRegion",
+        "type": "view",
+        "key-fields": [ "region", "period" ]
+      },
+      "description": "Aggregated sales by region and month",
+      "rest": { "path": "sales-by-region" },
+      "permissions": [ { "role": "anonymous", "actions": [ "read" ] } ]
+    }
+  }
+}

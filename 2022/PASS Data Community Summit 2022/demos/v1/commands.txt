@@ -1,0 +1,6 @@
+#
+# Miscellaneous commands
+#
+
+curl -G http://localhost:8086/query --data-urlencode "q=SHOW DATABASES"
+curl -G http://localhost:8086/query -u admin:P@ssw0rd! --data-urlencode "q=SHOW DATABASES"

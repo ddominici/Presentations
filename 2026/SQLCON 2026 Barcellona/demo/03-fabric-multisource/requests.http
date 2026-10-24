@@ -1,0 +1,27 @@
+### Demo 3 — one API, three databases
+@host = http://localhost:5000
+
+### health — one entry per named data source, each with its own status and timing
+GET {{host}}/health
+
+### on-premises SQL Server
+GET {{host}}/api/policies?$first=3
+
+### Azure SQL
+GET {{host}}/api/claims
+
+### SQL database in Microsoft Fabric
+GET {{host}}/api/sales-fact?$filter=period eq '2026-02'
+GET {{host}}/api/sales-by-region?$orderby=written_premium desc
+
+### one OpenAPI document covering all three
+GET {{host}}/api/openapi
+
+### GraphQL: two sources in one round trip — but two separate queries,
+### because DAB does not join across data sources.
+POST {{host}}/graphql
+Content-Type: application/json
+
+{
+  "query": "query { policies(first: 3) { items { policy_number product } } salesFacts(first: 3) { items { period region written_premium } } }"
+}

@@ -1,0 +1,79 @@
+### Demo 1 — local SQL Server
+### VS Code REST Client, or copy the URLs into a browser.
+@host = http://localhost:5000
+
+### health — always the first call in any environment
+GET {{host}}/health
+
+### everything
+GET {{host}}/api/policies
+
+### filter, sort, page  (OData-like operators, parameterised under the hood)
+GET {{host}}/api/policies?$filter=status eq 'active'&$orderby=premium desc&$first=5
+
+### projection
+GET {{host}}/api/policies?$select=policy_number,product,premium
+
+### by primary key
+GET {{host}}/api/policies/id/1
+
+### the view
+GET {{host}}/api/policy-summary?$filter=days_to_expiry lt 400
+
+### insert
+POST {{host}}/api/policies
+Content-Type: application/json
+
+{
+  "policy_number": "POL-2026-0099",
+  "product": "Motor - comprehensive",
+  "status": "pending",
+  "premium": 999.00,
+  "commission_amount": 99.90,
+  "broker_id": 1,
+  "effective_date": "2026-09-01",
+  "expiry_date": "2027-08-31"
+}
+
+### keyless PATCH — new in 2.0 when the database generates every omitted key
+PATCH {{host}}/api/policies
+Content-Type: application/json
+
+{
+  "policy_number": "POL-2026-0100",
+  "product": "Travel - annual",
+  "status": "active",
+  "premium": 240.00,
+  "commission_amount": 24.00,
+  "broker_id": 2,
+  "effective_date": "2026-09-01",
+  "expiry_date": "2027-08-31"
+}
+
+### the stored procedure
+POST {{host}}/api/renew-policy
+Content-Type: application/json
+
+{
+  "policy_number": "POL-2026-0003",
+  "months": 12
+}
+
+### OpenAPI document (Swagger UI lives at the same path in a browser)
+GET {{host}}/api/openapi
+
+### GraphQL — nested read through the declared relationship
+POST {{host}}/graphql
+Content-Type: application/json
+
+{
+  "query": "query { policies(filter: { status: { eq: \"active\" } }, orderBy: { premium: DESC }, first: 5) { items { policy_number product premium broker { name city } } } }"
+}
+
+### GraphQL — aggregation (SQL family only)
+POST {{host}}/graphql
+Content-Type: application/json
+
+{
+  "query": "query { policies { groupBy { fields { status } aggregations { sum(field: premium) count(field: id) } } } }"
+}

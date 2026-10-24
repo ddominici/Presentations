@@ -1,0 +1,73 @@
+{
+  "$schema": "https://github.com/Azure/data-api-builder/releases/download/v2.0.12/dab.draft.schema.json",
+  "data-source": {
+    "database-type": "mssql",
+    "connection-string": "@env('SQL_CONN')"
+  },
+  "runtime": {
+    "rest": { "enabled": true, "path": "/api" },
+    "graphql": { "enabled": true, "path": "/graphql", "allow-introspection": true },
+    "mcp": {
+      "enabled": true,
+      "path": "/mcp",
+      "dml-tools": {
+        "describe-entities": true,
+        "read-records": true,
+        "aggregate-records": true,
+        "create-record": false,
+        "update-record": false,
+        "delete-record": false,
+        "execute-entity": false
+      }
+    },
+    "host": {
+      "cors": { "origins": [], "allow-credentials": false },
+      "authentication": { "provider": "Unauthenticated" },
+      "mode": "development"
+    }
+  },
+  "entities": {
+    "PolicySummary": {
+      "description": "Read-only policy reporting view, including policy status, premium, broker and days until expiry.",
+      "source": { "object": "dbo.vw_PolicySummary", "type": "view" },
+      "fields": [
+        { "name": "policy_id", "description": "Unique identifier for the policy", "primary-key": true },
+        { "name": "policy_number", "description": "Human-readable policy contract number" },
+        { "name": "product", "description": "Insurance product or line of business" },
+        { "name": "status", "description": "Policy lifecycle status: active, lapsed, cancelled or pending" },
+        { "name": "premium", "description": "Annual policy premium in the policy currency" },
+        { "name": "broker_name", "description": "Full name of the broker who sold the policy" },
+        { "name": "broker_code", "description": "Short broker identifier" },
+        { "name": "broker_city", "description": "City where the broker is based" },
+        { "name": "days_to_expiry", "description": "Number of days until the policy expires" }
+      ],
+      "rest": { "enabled": true },
+      "permissions": [{ "role": "anonymous", "actions": [{ "action": "read" }] }]
+    },
+    "Policy": {
+      "description": "Insurance policies, one row per contract.",
+      "source": { "object": "dbo.Policies", "type": "table" },
+      "fields": [
+        { "name": "id", "description": "Unique policy identifier", "primary-key": true },
+        { "name": "policy_number", "description": "Human-readable policy contract number" },
+        { "name": "status", "description": "Policy lifecycle status" },
+        { "name": "premium", "description": "Annual policy premium" },
+        { "name": "broker_id", "description": "Identifier of the selling broker" }
+      ],
+      "rest": { "enabled": true },
+      "permissions": [{ "role": "anonymous", "actions": [{ "action": "read" }] }]
+    },
+    "Broker": {
+      "description": "Brokers who sell the policies.",
+      "source": { "object": "dbo.Brokers", "type": "table" },
+      "fields": [
+        { "name": "id", "description": "Unique broker identifier", "primary-key": true },
+        { "name": "name", "description": "Full name of the broker" },
+        { "name": "code", "description": "Short broker identifier" },
+        { "name": "city", "description": "City where the broker is based" }
+      ],
+      "rest": { "enabled": true },
+      "permissions": [{ "role": "anonymous", "actions": [{ "action": "read" }] }]
+    }
+  }
+}

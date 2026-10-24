@@ -1,0 +1,9 @@
+{
+  "_comment": "MCP client configuration. Replace <fqdn> with the ACI DNS name printed by deploy-aci.sh. Streamable HTTP is the transport for hosted DAB; use dab start --mcp-stdio for a local process instead.",
+  "servers": {
+    "dab-insurance": {
+      "type": "http",
+      "url": "http://<fqdn>:5000/mcp"
+    }
+  }
+}

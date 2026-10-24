@@ -1,0 +1,21 @@
+:root {
+  --bg: #f4f2ee;
+  --fg: #17202c;
+  --muted: #687282;
+  --line: #dddcd7;
+  --surface: #fffefa;
+  --shadow: 0 18px 50px rgba(41, 43, 49, .07);
+  --onprem: #1d5e58;
+  --azure: #2465a8;
+  --fabric: #b45c25;
+  font: 15px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--fg);
+  background: var(--bg);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+:root[data-theme='dark'] { --bg: #11161d; --fg: #e9eceb; --muted: #a2adb8; --line: #2d353d; --surface: #1a2129; --shadow: 0 18px 50px rgba(0, 0, 0, .2); }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); }
+button { font: inherit; cursor: pointer; }

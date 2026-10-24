@@ -1,0 +1,39 @@
+### Demo 2 — Azure SQL with Entra ID
+### Two tokens: one for a reader, one for a broker. Acquire them before the session.
+@host  = http://localhost:5000
+@reader = Bearer eyJ...            # paste a token whose roles claim contains "reader"
+@broker = Bearer eyJ...            # paste a token whose roles claim contains "broker"
+
+### anonymous — with EntraId configured and no anonymous permissions, this is a 403
+GET {{host}}/api/policies
+
+### reader — all rows, but commission_amount is absent from the payload
+GET {{host}}/api/policies
+Authorization: {{reader}}
+
+### broker — fewer rows: the item-level policy became a predicate in the query
+GET {{host}}/api/policies
+Authorization: {{broker}}
+
+### broker — allowed to update only two columns
+PATCH {{host}}/api/policies/id/1
+Authorization: {{broker}}
+Content-Type: application/json
+
+{ "status": "active", "expiry_date": "2028-01-14" }
+
+### broker — this one fails: premium is not in the allowed field list
+PATCH {{host}}/api/policies/id/1
+Authorization: {{broker}}
+Content-Type: application/json
+
+{ "premium": 1.00 }
+
+### permission-aware OpenAPI (2.0) — development mode only
+GET {{host}}/api/openapi
+GET {{host}}/api/openapi/reader
+GET {{host}}/api/openapi/broker
+
+### cache: run twice within the TTL and watch the database, not the browser
+GET {{host}}/api/policies?$filter=status eq 'active'
+Authorization: {{reader}}

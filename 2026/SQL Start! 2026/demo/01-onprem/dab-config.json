@@ -1,0 +1,192 @@
+{
+  "$schema": "https://github.com/Azure/data-api-builder/releases/download/v2.0.12/dab.draft.schema.json",
+  "data-source": {
+    "database-type": "mssql",
+    "connection-string": "@env('SQL_CONN')",
+    "options": {
+      "set-session-context": false
+    }
+  },
+  "runtime": {
+    "rest": {
+      "enabled": true,
+      "path": "/api",
+      "request-body-strict": false
+    },
+    "graphql": {
+      "enabled": true,
+      "path": "/graphql",
+      "allow-introspection": true
+    },
+    "mcp": {
+      "enabled": true,
+      "path": "/mcp"
+    },
+    "host": {
+      "cors": {
+        "origins": [],
+        "allow-credentials": false
+      },
+      "authentication": {
+        "provider": "Unauthenticated"
+      },
+      "mode": "development"
+    },
+    "telemetry": {
+      "open-telemetry": {
+        "enabled": true,
+        "endpoint": "@env('OTEL_EXPORTER_OTLP_ENDPOINT')",
+        "headers": "@env('OTEL_EXPORTER_OTLP_HEADERS')",
+        "service-name": "@env('OTEL_SERVICE_NAME')"
+      }
+    }
+  },
+  "autoentities": {},
+  "entities": {
+    "Policy": {
+      "description": "Insurance policies, one row per contract",
+      "source": {
+        "object": "dbo.Policies",
+        "type": "table"
+      },
+      "fields": [],
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Policy",
+          "plural": "Policies"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ],
+      "relationships": {
+        "broker": {
+          "cardinality": "one",
+          "target.entity": "Broker",
+          "source.fields": [
+            "broker_id"
+          ],
+          "target.fields": [
+            "id"
+          ],
+          "linking.source.fields": [],
+          "linking.target.fields": []
+        }
+      }
+    },
+    "Broker": {
+      "description": "Brokers who sell the policies",
+      "source": {
+        "object": "dbo.Brokers",
+        "type": "table"
+      },
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Broker",
+          "plural": "Brokers"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "read"
+            }
+          ]
+        }
+      ]
+    },
+    "PolicySummary": {
+      "description": "Denormalised policy and broker summary",
+      "source": {
+        "object": "dbo.vw_PolicySummary",
+        "type": "view",
+        "key-fields": [
+          "policy_id"
+        ]
+      },
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "PolicySummary",
+          "plural": "PolicySummaries"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "read"
+            }
+          ]
+        }
+      ]
+    },
+    "RenewPolicy": {
+      "description": "Extends a policy by N months and reactivates it",
+      "source": {
+        "object": "dbo.usp_RenewPolicy",
+        "type": "stored-procedure",
+        "parameters": [
+          {
+            "name": "policy_number",
+            "required": false,
+            "default": "POL-2026-0001"
+          },
+          {
+            "name": "months",
+            "required": false,
+            "default": "12"
+          }
+        ]
+      },
+      "graphql": {
+        "enabled": true,
+        "operation": "mutation",
+        "type": {
+          "singular": "RenewPolicy",
+          "plural": "RenewPolicies"
+        }
+      },
+      "rest": {
+        "enabled": true,
+        "methods": [
+          "post"
+        ]
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "execute"
+            }
+          ]
+        }
+      ],
+      "mcp": {
+        "custom-tool": true
+      }
+    }
+  }
+}

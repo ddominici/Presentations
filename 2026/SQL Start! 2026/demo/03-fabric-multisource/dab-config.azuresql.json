@@ -1,0 +1,18 @@
+{
+  "$schema": "https://github.com/Azure/data-api-builder/releases/latest/download/dab.draft.schema.json",
+  "data-source": {
+    "database-type": "mssql",
+    "connection-string": "@env('AZURE_SQL_CONN')",
+    "health": {
+      "name": "azure-sql-claims"
+    }
+  },
+  "entities": {
+    "Claim": {
+      "source": { "object": "dbo.Claims", "type": "table" },
+      "description": "Claims — Azure SQL Database",
+      "rest": { "path": "claims" },
+      "permissions": [ { "role": "anonymous", "actions": [ "read" ] } ]
+    }
+  }
+}

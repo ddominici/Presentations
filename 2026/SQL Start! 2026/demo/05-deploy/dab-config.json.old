@@ -1,0 +1,91 @@
+{
+  "$schema": "https://github.com/Azure/data-api-builder/releases/latest/download/dab.draft.schema.json",
+  "data-source": {
+    "database-type": "mssql",
+    "name": "azure-sql-insurance",
+    "connection-string": "@env('DATABASE_CONNECTION_STRING')",
+    "health": {
+      "enabled": true,
+      "threshold-ms": 1000
+    }
+  },
+  "runtime": {
+    "rest": {
+      "enabled": true,
+      "path": "/api"
+    },
+    "graphql": {
+      "enabled": true,
+      "path": "/graphql",
+      "allow-introspection": true
+    },
+    "mcp": {
+      "enabled": true,
+      "description": "Insurance policies, brokers and claims. Read-only for agents."
+    },
+    "cache": {
+      "enabled": true,
+      "ttl-seconds": 30
+    },
+    "compression": {
+      "level": "optimal"
+    },
+    "telemetry": {
+      "open-telemetry": {
+        "enabled": true,
+        "endpoint": "@env('OTEL_EXPORTER_OTLP_ENDPOINT')",
+        "headers": "@env('OTEL_EXPORTER_OTLP_HEADERS')",
+        "service-name": "@env('OTEL_SERVICE_NAME')"
+      }
+    },
+    "host": {
+      "mode": "development",
+      "cors": {
+        "origins": [],
+        "allow-credentials": false
+      },
+      "authentication": {
+        "provider": "Unauthenticated"
+      }
+    }
+  },
+  "entities": {
+    "Policy": {
+      "source": { "object": "dbo.Policies", "type": "table" },
+      "description": "Insurance policies, one row per contract",
+      "rest": { "path": "policies" },
+      "cache": { "enabled": true, "ttl-seconds": 30 },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "read",
+              "fields": { "exclude": [ "commission_amount", "broker_oid" ] }
+            }
+          ]
+        }
+      ]
+    },
+    "Broker": {
+      "source": { "object": "dbo.Brokers", "type": "table" },
+      "description": "Brokers who sell the policies",
+      "rest": { "path": "brokers" },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            { "action": "read", "fields": { "exclude": [ "entra_oid" ] } }
+          ]
+        }
+      ]
+    },
+    "Claim": {
+      "source": { "object": "dbo.Claims", "type": "table" },
+      "description": "Claims opened against a policy, with reserve and paid amounts",
+      "rest": { "path": "claims" },
+      "mcp": { "dml-tools": true },
+      "permissions": [ { "role": "anonymous", "actions": [ "read" ] } ]
+    }
+  }
+}

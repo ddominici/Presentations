@@ -1,0 +1,21 @@
+#
+# Setup mssql database for InfluxDB 1.x
+# Description:
+#   - Create a new admin user
+#   - Create a new database called mssql
+#   - Create a new retention policy for mssql database with a retention time of two weeks
+#   - Create a new user telegraf with no admin permissions and assign read and write permissions on database mssql
+#
+# Usage: influx -import -path=setup_influxdb_18.txt -precision=s
+#
+
+CREATE USER admin WITH PASSWORD 'P@ssw0rd!' WITH ALL PRIVILEGES
+
+CREATE DATABASE mssql
+
+CREATE RETENTION POLICY two_weeks ON mssql DURATION 2w REPLICATION 1 DEFAULT
+
+CREATE USER telegraf WITH PASSWORD 'P@ssw0rd!'
+
+GRANT READ ON mssql TO telegraf
+GRANT WRITE ON mssql TO telegraf

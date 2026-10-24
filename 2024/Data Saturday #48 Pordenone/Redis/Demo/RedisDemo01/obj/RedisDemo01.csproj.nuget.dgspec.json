@@ -1,0 +1,90 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/ddominici/Documents/_Work/_Speaking/20240224 Data Saturday Pordenone/Demo/RedisDemo01/RedisDemo01/RedisDemo01.csproj": {}
+  },
+  "projects": {
+    "/Users/ddominici/Documents/_Work/_Speaking/20240224 Data Saturday Pordenone/Demo/RedisDemo01/RedisDemo01/RedisDemo01.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/ddominici/Documents/_Work/_Speaking/20240224 Data Saturday Pordenone/Demo/RedisDemo01/RedisDemo01/RedisDemo01.csproj",
+        "projectName": "RedisDemo01",
+        "projectPath": "/Users/ddominici/Documents/_Work/_Speaking/20240224 Data Saturday Pordenone/Demo/RedisDemo01/RedisDemo01/RedisDemo01.csproj",
+        "packagesPath": "/Users/ddominici/.nuget/packages/",
+        "outputPath": "/Users/ddominici/Documents/_Work/_Speaking/20240224 Data Saturday Pordenone/Demo/RedisDemo01/RedisDemo01/obj/",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "/Users/ddominici/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.Extensions.Configuration": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.Extensions.Configuration.EnvironmentVariables": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.Extensions.Configuration.Json": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "StackExchange.Redis": {
+              "target": "Package",
+              "version": "[2.7.17, )"
+            },
+            "System.Data.SqlClient": {
+              "target": "Package",
+              "version": "[4.8.6, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

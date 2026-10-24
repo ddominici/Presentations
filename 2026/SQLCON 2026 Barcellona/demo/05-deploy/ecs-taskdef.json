@@ -1,0 +1,44 @@
+{
+  "family": "dab-api",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": [ "FARGATE" ],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::<account-id>:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::<account-id>:role/dab-task-role",
+  "containerDefinitions": [
+    {
+      "name": "dab",
+      "image": "<account-id>.dkr.ecr.eu-west-1.amazonaws.com/dab:2",
+      "essential": true,
+      "portMappings": [
+        { "containerPort": 5000, "protocol": "tcp" }
+      ],
+      "environment": [
+        { "name": "OTEL_SERVICE_NAME", "value": "dab-api" },
+        { "name": "OTEL_EXPORTER_OTLP_ENDPOINT", "value": "http://localhost:4317" }
+      ],
+      "secrets": [
+        {
+          "name": "DATABASE_CONNECTION_STRING",
+          "valueFrom": "arn:aws:secretsmanager:eu-west-1:<account-id>:secret:dab/sql-conn"
+        }
+      ],
+      "healthCheck": {
+        "command": [ "CMD-SHELL", "curl -f http://localhost:5000/health || exit 1" ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 20
+      },
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/dab-api",
+          "awslogs-region": "eu-west-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}
