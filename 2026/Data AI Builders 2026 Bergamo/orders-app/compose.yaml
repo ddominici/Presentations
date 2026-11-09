@@ -1,0 +1,70 @@
+name: orders-app
+
+x-dab: &dab
+  image: mcr.microsoft.com/azure-databases/data-api-builder:latest
+  command: ["--ConfigFileName", "/App/dab-config.json"]
+  volumes:
+    - ./dab/dab-config.json:/App/dab-config.json:ro
+  depends_on:
+    postgres:
+      condition: service_healthy
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg18
+    platform: linux/arm64
+    environment:
+      POSTGRES_DB: shop
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      APP_ROLE_PASSWORD: ${APP_ROLE_PASSWORD:-demo_only}
+    ports:
+      - "${PG_PORT:-15440}:5432"
+    volumes:
+      - orders_pg_data:/var/lib/postgresql
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d shop"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+
+  # Stessa configurazione DAB, tre identità di database: la RLS fa il resto.
+  dab-bergamo:
+    <<: *dab
+    platform: linux/amd64
+    environment:
+      DAB_CONNECTION: "Host=postgres;Port=5432;Database=shop;Username=rep_bergamo;Password=${APP_ROLE_PASSWORD:-demo_only}"
+    ports: ["5001:5000"]
+
+  dab-milano:
+    <<: *dab
+    platform: linux/amd64
+    environment:
+      DAB_CONNECTION: "Host=postgres;Port=5432;Database=shop;Username=rep_milano;Password=${APP_ROLE_PASSWORD:-demo_only}"
+    ports: ["5002:5000"]
+
+  dab-manager:
+    <<: *dab
+    platform: linux/amd64
+    environment:
+      DAB_CONNECTION: "Host=postgres;Port=5432;Database=shop;Username=shop_manager;Password=${APP_ROLE_PASSWORD:-demo_only}"
+    ports: ["5003:5000"]
+
+  # Quello che DAB non fa: inoltrare LISTEN/NOTIFY come SSE e calcolare gli embedding fuori dal database.
+  sidecar:
+    build: ./sidecar
+    platform: linux/arm64
+    environment:
+      DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/shop
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-hash}
+      EMBEDDING_BASE_URL: ${EMBEDDING_BASE_URL:-}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-}
+      EMBEDDING_API_KEY: ${EMBEDDING_API_KEY:-}
+    ports: ["5004:5004"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  orders_pg_data:

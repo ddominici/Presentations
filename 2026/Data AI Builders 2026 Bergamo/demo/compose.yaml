@@ -1,0 +1,22 @@
+name: dab-bg-26
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg18
+    environment:
+      POSTGRES_DB: pgdemo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "55432:5432"
+    volumes:
+      - pg_demo_data:/var/lib/postgresql
+      - ./:/demo:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d pgdemo"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  pg_demo_data:
